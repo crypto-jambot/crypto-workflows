@@ -1,0 +1,38 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup git config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - name: Deploy Workflow
+        run: |
+          gcloud workflows deploy ethereum-ingress \
+          --location us-central1 \
+          --source blockchins/ethereum.yaml \
+          --project ${{ secrets.GCP_PROJECT_ID }} \
+          --labels "commit-sha=${{ github.sha }}" \
+          --service-account ${{ secrets.SERVICE_ACCOUNT }}
