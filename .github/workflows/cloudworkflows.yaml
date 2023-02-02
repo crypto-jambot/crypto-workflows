@@ -32,7 +32,7 @@ jobs:
         run: |
           gcloud workflows deploy ethereum-ingress \
           --location us-central1 \
-          --source blockchins/ethereum.yaml \
-          --project ${{ secrets.GCP_PROJECT_ID }} \
+          --source blockchains/ethereum.yaml \
+          --project $GCP_PROJECT \
           --labels "commit-sha=${{ github.sha }}" \
           --service-account ${{ secrets.SERVICE_ACCOUNT }}
