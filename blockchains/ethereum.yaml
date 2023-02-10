@@ -59,6 +59,14 @@ main:
           jobId: ${path_resolver_job_id}
           status: JOB_STATE_DONE
           project: ${project}
+    - invoke_mongo_loader:
+        call: http.post
+        args:
+          url: https://mongo-loader-o7et2ip22q-uc.a.run.app
+          body:
+            bucketName: ${args.bucketName}
+          auth:
+            type: OIDC
     - return_value:
         return: Workflow Success
 LaunchDataflow:
