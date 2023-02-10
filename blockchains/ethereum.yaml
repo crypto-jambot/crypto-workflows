@@ -8,6 +8,7 @@ main:
         call: http.post
         args:
           url: https://bigquery-pool-ingestor-o7et2ip22q-uc.a.run.app/
+          timeout: 1800
           body:
             - blockchain: ${args.blockchain}
               exchangeName: uniswapV2
@@ -27,6 +28,7 @@ main:
         call: http.post
         args:
           url: https://bigquery-token-enricher-o7et2ip22q-uc.a.run.app
+          timeout: 1800
           body:
             blockchain: ${args.blockchain}
             numberToProcess: 50000
@@ -63,6 +65,7 @@ main:
         call: http.post
         args:
           url: https://mongo-loader-o7et2ip22q-uc.a.run.app
+          timeout: 1800
           body:
             bucketName: ${args.bucketName}
           auth:
