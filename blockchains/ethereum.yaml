@@ -70,6 +70,34 @@ main:
             bucketName: ${args.bucketName}
           auth:
             type: OIDC
+    - access_api_secret_key:
+        call: googleapis.secretmanager.v1.projects.secrets.versions.accessString
+        args:
+          secret_id: ${args.apiKey}
+          project_id: ${project}
+        result: secret
+    - retrieve_access_token:
+        call: http.get
+        args:
+          url: https://rabbit.dev/auth
+          headers:
+            api-key: ${secret}
+        result: accessTokenResponse
+    - assign_access_token:
+        assign:
+          - accessToken: ${accessTokenResponse.body.token.token}
+    - rename_collections:
+        call: http.put
+        args:
+          url: https://rabbit.dev/mongo/rename
+          headers:
+            Authorization: ${"Bearer " + accessToken}
+    - delete_collection:
+        call: http.delete
+        args:
+          url: https://rabbit.dev/mongo/delete
+          headers:
+            Authorization: ${"Bearer " + accessToken}
     - return_value:
         return: Workflow Success
 LaunchDataflow:
