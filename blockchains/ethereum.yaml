@@ -54,6 +54,7 @@ main:
           artifactId: path-resolver
           bucketName: path-resolver-dfjob
           dataflowName: App
+          version: 1.0.0
         result: path_resolver_job_id
     - wait_until_path_resolver_done:
         call: DataflowWaitUntilStatus
@@ -101,7 +102,7 @@ main:
     - return_value:
         return: Workflow Success
 LaunchDataflow:
-  params: [artifactId, bucketName, dataflowName]
+  params: [artifactId, bucketName, dataflowName, version]
   steps:
     - launch:
         call: http.post
@@ -111,6 +112,7 @@ LaunchDataflow:
             artifactId: ${artifactId}
             bucketName: ${bucketName}
             dataflowName: ${dataflowName}
+            version: ${version}
           auth:
             type: OIDC
         result: dataflowResponse
