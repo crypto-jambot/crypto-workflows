@@ -41,6 +41,7 @@ main:
           artifactId: pool-refiner
           bucketName: pool-refiner-dfjob
           dataflowName: App
+          version: null
         result: pool_refiner_job_id
     - wait_until_pool_refiner_done:
         call: DataflowWaitUntilStatus
