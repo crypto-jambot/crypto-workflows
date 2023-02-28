@@ -69,6 +69,7 @@ main:
           artifactId: tree-builder
           bucketName: tree-builder-dfjob
           dataflowName: App
+          version: null
         result: tree_builder_job_id
     - wait_until_tree_builder_done:
         call: DataflowWaitUntilStatus
