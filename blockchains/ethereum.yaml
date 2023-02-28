@@ -49,7 +49,7 @@ main:
           jobId: ${pool_refiner_job_id}
           status: JOB_STATE_DONE
           project: ${project}
-    - invoke_path-resolver:
+    - invoke_path_resolver:
         call: LaunchDataflow
         args:
           artifactId: path-resolver
@@ -61,6 +61,19 @@ main:
         call: DataflowWaitUntilStatus
         args:
           jobId: ${path_resolver_job_id}
+          status: JOB_STATE_DONE
+          project: ${project}
+    - invoke_tree_builder:
+        call: LaunchDataflow
+        args:
+          artifactId: tree-builder
+          bucketName: tree-builder-dfjob
+          dataflowName: App
+        result: tree_builder_job_id
+    - wait_until_tree_builder_done:
+        call: DataflowWaitUntilStatus
+        args:
+          jobId: ${tree_builder_job_id}
           status: JOB_STATE_DONE
           project: ${project}
     - invoke_mongo_loader:
