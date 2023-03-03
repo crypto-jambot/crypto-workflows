@@ -77,43 +77,20 @@ main:
           jobId: ${tree_builder_job_id}
           status: JOB_STATE_DONE
           project: ${project}
-    - invoke_mongo_loader:
-        call: http.post
-        args:
-          url: https://mongo-loader-o7et2ip22q-uc.a.run.app
-          timeout: 1800
-          body:
-            bucketName: ${args.bucketName}
-          auth:
-            type: OIDC
-    - access_api_secret_key:
-        call: googleapis.secretmanager.v1.projects.secrets.versions.accessString
-        args:
-          secret_id: ${args.apiKey}
-          project_id: ${project}
-        result: secret
-    - retrieve_access_token:
-        call: http.get
-        args:
-          url: https://rabbit.dev/auth
-          headers:
-            api-key: ${secret}
-        result: accessTokenResponse
-    - assign_access_token:
-        assign:
-          - accessToken: ${accessTokenResponse.body.token.token}
     - rename_collections:
         call: http.put
         args:
-          url: https://rabbit.dev/mongo/rename
-          headers:
-            Authorization: ${"Bearer " + accessToken}
+          url: https://database-api-o7et2ip22q-uc.a.run.app/rename
+          timeout: 1800
+          auth:
+            type: OIDC
     - delete_collection:
         call: http.delete
         args:
-          url: https://rabbit.dev/mongo/delete
-          headers:
-            Authorization: ${"Bearer " + accessToken}
+          url: https://database-api-o7et2ip22q-uc.a.run.app/delete
+          timeout: 1800
+          auth:
+            type: OIDC
     - return_value:
         return: Workflow Success
 LaunchDataflow:
