@@ -80,7 +80,12 @@ main:
             project: ${project}
         except:
           as: e
-          next: delete_collection
+          steps:
+            - log_failure:
+                call: sys.log
+                args:
+                  json: ${e}
+                next: delete_collection
     - rename_collections:
         call: http.put
         args:
