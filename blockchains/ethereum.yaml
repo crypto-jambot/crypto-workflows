@@ -55,7 +55,7 @@ main:
           artifactId: path-resolver
           bucketName: path-resolver-dfjob
           dataflowName: App
-          version: 1.0.0
+          version: null
         result: path_resolver_job_id
     - wait_until_path_resolver_done:
         call: DataflowWaitUntilStatus
@@ -72,11 +72,15 @@ main:
           version: null
         result: tree_builder_job_id
     - wait_until_tree_builder_done:
-        call: DataflowWaitUntilStatus
-        args:
-          jobId: ${tree_builder_job_id}
-          status: JOB_STATE_DONE
-          project: ${project}
+        try:
+          call: DataflowWaitUntilStatus
+          args:
+            jobId: ${tree_builder_job_id}
+            status: JOB_STATE_DONE
+            project: ${project}
+        except:
+          as: e
+          next: delete_collection
     - rename_collections:
         call: http.put
         args:
