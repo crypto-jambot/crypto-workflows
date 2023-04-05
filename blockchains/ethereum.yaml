@@ -4,25 +4,23 @@ main:
     - init:
         assign:
           - project: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+    - fetch_exchanges:
+        try:
+          call: http.get
+          args:
+            url: https://us-central1-crypto-351521.cloudfunctions.net/fetch-exchanges
+            timeout: 1800
+            auth:
+              type: OIDC
+          result: exchanges
+        retry: ${http.default_retry}
     - invoke_pool_ingestor:
         try:
           call: http.post
           args:
             url: https://bigquery-pool-ingestor-o7et2ip22q-uc.a.run.app/
             timeout: 1800
-            body:
-              - blockchain: ${args.blockchain}
-                exchangeName: uniswapV2
-                numberOfBlocks: 1000000
-                rpcBlockBatchSize: 10000
-              - blockchain: ${args.blockchain}
-                exchangeName: uniswapV3
-                numberOfBlocks: 1000000
-                rpcBlockBatchSize: 10000
-              - blockchain: ${args.blockchain}
-                exchangeName: sushiswap
-                numberOfBlocks: 1000000
-                rpcBlockBatchSize: 10000
+            body: ${exchanges.body}
             auth:
               type: OIDC
         retry: ${http.default_retry}
